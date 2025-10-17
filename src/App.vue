@@ -312,7 +312,7 @@ function checkWin(layerIndex: number) {
 
 function layerStyle(index: number, color: string) {
   const glow = hexToRgba(color, 0.25)
-  const surface = mixWithWhite(color, 0.2)
+  const surface = color // mixWithWhite(color, 0.2)
   const highlight = mixWithWhite(color, 0.4)
   return {
     '--layer-color': color,
