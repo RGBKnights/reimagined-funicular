@@ -1,6 +1,6 @@
 :root {
-  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-  color: #00ff41;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #c4b5fd;
   background: #0a0e27;
   line-height: 1.6;
 }
