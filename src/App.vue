@@ -450,14 +450,12 @@ defineExpose({
           </span>
           Layered Minesweeper
         </h2>
-      </header>
-      <div class="game-controls">
-        <button class="primary" type="button" @click="resetGame">New Game</button>
         <div class="summary">
           <span><strong>Total mines:</strong> {{ totalMines }}</span>
           <span><strong>Flags placed:</strong> {{ totalFlags }}</span>
         </div>
-      </div>
+        <button class="primary" type="button" @click="resetGame">New Game</button>
+      </header>
       <div class="board-stack" role="region" aria-live="polite">
         <div
           v-for="(layer, layerIndex) in layers"
@@ -641,7 +639,9 @@ defineExpose({
 .game-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .game-title {
