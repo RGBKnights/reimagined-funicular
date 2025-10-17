@@ -422,7 +422,7 @@ defineExpose({
             </option>
           </select>
         </div>
-        <button class="primary" type="button" @click="startGame">
+        <button class="primary start-game-btn" type="button" @click="startGame">
           Start Game
         </button>
       </div>
@@ -554,14 +554,18 @@ defineExpose({
 }
 
 .setup-section {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 1.5rem;
-  justify-items: center;
   background: rgba(255, 255, 255, 0.95);
   padding: 3rem 2rem;
   border-radius: 2rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
   backdrop-filter: blur(10px);
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .brand {
@@ -608,9 +612,15 @@ defineExpose({
 
 .setup-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1rem;
-  justify-content: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.setup-actions .preset-panel,
+.setup-actions .start-game-btn {
+  width: 100%;
 }
 
 .game-section {
