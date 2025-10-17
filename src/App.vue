@@ -250,16 +250,14 @@ function checkWin(layer: Layer) {
 }
 
 function layerStyle(index: number, color: string) {
-  const offset = index * 18
   const glow = hexToRgba(color, 0.35)
-  const backgroundTint = hexToRgba(color, 0.18)
+  const surface = hexToRgba(color, 0.12)
   return {
     '--layer-color': color,
     zIndex: layers.value.length - index,
-    transform: `translate(${offset}px, ${offset}px)`,
-    borderColor: color,
-    boxShadow: `0 18px 40px ${glow}`,
-    background: `linear-gradient(160deg, ${backgroundTint} 0%, #ffffff 55%)`
+    borderColor: hexToRgba(color, 0.55),
+    boxShadow: `0 18px 40px ${glow}, 0 12px 18px ${hexToRgba(color, 0.2)}`,
+    background: `linear-gradient(165deg, ${surface} 0%, rgba(255,255,255,0.95) 55%, #ffffff 100%)`
   }
 }
 
@@ -504,50 +502,64 @@ button.secondary:active {
 
 .board-stack {
   position: relative;
+  display: grid;
+  place-items: center;
   padding: 3rem;
   min-height: 320px;
 }
 
 .board-layer {
   --cell-size: 32px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  position: relative;
+  grid-area: 1 / 1;
+  border-radius: 1.25rem;
   overflow: hidden;
-  border: 3px solid rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(15, 23, 42, 0.08);
+  background-color: #fff;
+  transform-origin: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.board-layer::after {
+.board-layer:hover {
+  transform: scale(1.01);
+}
+
+.board-layer::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent 70%);
+  border-radius: inherit;
   pointer-events: none;
-  opacity: 0.5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  mix-blend-mode: screen;
 }
 
-.board-layer.lost {
-  box-shadow: 0 18px 45px rgba(239, 68, 68, 0.28);
+.board-layer.playing {
+  filter: drop-shadow(0 24px 50px rgba(15, 23, 42, 0.18));
 }
 
 .board-layer.won {
-  box-shadow: 0 18px 45px rgba(34, 197, 94, 0.28);
+  filter: drop-shadow(0 24px 40px rgba(34, 197, 94, 0.35));
+}
+
+.board-layer.lost {
+  filter: drop-shadow(0 24px 40px rgba(239, 68, 68, 0.35));
 }
 
 .layer-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.85rem 1rem;
-  color: #0f172a;
-  font-weight: 600;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  color: #f8fafc;
+  background: linear-gradient(120deg, var(--layer-color), rgba(15, 23, 42, 0.75));
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.layer-header .layer-title {
-  font-size: 1.05rem;
+.layer-title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .layer-meta {
@@ -556,11 +568,17 @@ button.secondary:active {
   font-size: 0.9rem;
 }
 
+.layer-meta span strong {
+  font-weight: 700;
+}
+
 .grid {
   display: grid;
   gap: 4px;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem 1.75rem;
   background: rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(3px);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .cell {
@@ -574,7 +592,7 @@ button.secondary:active {
   place-items: center;
   cursor: pointer;
   user-select: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(226, 232, 240, 0.4));
   color: #1e293b;
   box-shadow: inset 0 -2px 0 rgba(15, 23, 42, 0.1);
   transition: transform 0.1s ease, box-shadow 0.1s ease;
@@ -587,7 +605,7 @@ button.secondary:active {
 
 .cell.revealed {
   cursor: default;
-  background: rgba(240, 249, 255, 0.9);
+  background: linear-gradient(145deg, rgba(224, 242, 254, 0.95), rgba(191, 219, 254, 0.35));
   box-shadow: none;
 }
 
@@ -649,7 +667,7 @@ button.secondary:active {
 
   .board-layer {
     --cell-size: 28px;
-    transform-origin: top left;
+    transform-origin: center;
   }
 
   .layer-meta {
