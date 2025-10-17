@@ -519,7 +519,7 @@ defineExpose({
   </div>
 </template>
 
-<style scoped>
+<style>
 .app-shell {
   max-width: min(1100px, 100vw - 2rem);
   margin: 0 auto;

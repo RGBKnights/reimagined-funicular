@@ -1,23 +1,8 @@
 :root {
-  font-family: 'Fira Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #1f2933;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  line-height: 1.5;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+  color: #00ff41;
+  background: #0a0e27;
+  line-height: 1.6;
 }
 
 * {

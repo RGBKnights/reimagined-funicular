@@ -1,0 +1,647 @@
+/* Retro Arcade Theme CSS */
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor, 0 0 50px currentColor;
+  }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.app-shell {
+  max-width: min(1100px, 100vw - 2rem);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100vh;
+  position: relative;
+}
+
+.app-shell::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 65, 0.03) 0px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+  animation: scanline 8s linear infinite;
+}
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 4px solid #00ff41;
+  border-radius: 0;
+  background: rgba(0, 255, 65, 0.05);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.4), inset 0 0 20px rgba(0, 255, 65, 0.1);
+  position: relative;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(0.9rem, 3vw, 1.4rem);
+  color: #00ff41;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41;
+  animation: glow 2s ease-in-out infinite;
+  font-weight: normal;
+}
+
+.app-header p {
+  margin: 0;
+  max-width: 50ch;
+  color: #00ccff;
+  text-align: center;
+  font-size: 0.5rem;
+  line-height: 1.8;
+  text-shadow: 0 0 5px #00ccff;
+}
+
+.setup-section {
+  display: grid;
+  gap: 2rem;
+  justify-items: center;
+  background: #0f1419;
+  padding: 2.5rem 2rem;
+  border: 4px solid #00ff41;
+  border-radius: 0;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.1);
+  position: relative;
+}
+
+.setup-section::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ff41, #00ccff, #ff00ff, #00ff41);
+  background-size: 400% 400%;
+  border-radius: 0;
+  z-index: -1;
+  filter: blur(12px);
+  opacity: 0.4;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.brand-logo {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 0;
+  background: #0a0e27;
+  border: 3px solid #00ff41;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.6), inset 0 0 20px rgba(0, 255, 65, 0.2);
+  animation: flicker 4s infinite;
+}
+
+.brand-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 8px #00ff41);
+}
+
+.brand-name {
+  margin: 0;
+  text-align: center;
+}
+
+.setup-copy {
+  margin: 0;
+  max-width: 45ch;
+  color: #00ccff;
+  text-align: center;
+  font-size: 0.55rem;
+  line-height: 1.8;
+  text-shadow: 0 0 5px #00ccff;
+}
+
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.game-section {
+  display: grid;
+  gap: 2rem;
+  background: #0f1419;
+  padding: 2rem;
+  border: 4px solid #00ff41;
+  border-radius: 0;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.1);
+  position: relative;
+}
+
+.game-section::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ff41, #00ccff, #ff00ff, #00ff41);
+  background-size: 400% 400%;
+  border-radius: 0;
+  z-index: -1;
+  filter: blur(12px);
+  opacity: 0.4;
+}
+
+.victory-section {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #0f1419;
+  border: 4px solid #ffff00;
+  border-radius: 0;
+  box-shadow: 0 0 40px rgba(255, 255, 0, 0.6), inset 0 0 30px rgba(255, 255, 0, 0.2);
+  position: relative;
+}
+
+.victory-section::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ffff00, #00ff41, #ffff00);
+  background-size: 400% 400%;
+  border-radius: 0;
+  z-index: -1;
+  filter: blur(15px);
+  opacity: 0.5;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border: 3px solid #00ff41;
+  background: rgba(0, 255, 65, 0.05);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.game-title {
+  margin: 0;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: normal;
+  color: #00ff41;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 10px #00ff41;
+  flex-direction: column;
+}
+
+.game-title .brand-logo {
+  width: 3rem;
+  height: 3rem;
+}
+
+.victory-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.victory-header h2 {
+  margin: 0;
+  font-size: clamp(0.75rem, 3vw, 1.2rem);
+  color: #ffff00;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00, 0 0 30px #ffff00;
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+.victory-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 0;
+  background: #0a0e27;
+  border: 4px solid #ffff00;
+  color: #ffff00;
+  font-size: 3rem;
+  box-shadow: 0 0 30px rgba(255, 255, 0, 0.7), inset 0 0 20px rgba(255, 255, 0, 0.2);
+  animation: flicker 1.2s infinite;
+}
+
+.victory-copy {
+  margin: 0;
+  max-width: 45ch;
+  color: #00ccff;
+  font-size: 0.55rem;
+  line-height: 1.8;
+  text-shadow: 0 0 5px #00ccff;
+}
+
+.victory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.preset-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(0, 255, 65, 0.05);
+  border-radius: 0;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3), inset 0 0 15px rgba(0, 255, 65, 0.1);
+  border: 3px solid #00ff41;
+}
+
+.preset-label {
+  font-size: 0.5rem;
+  font-weight: normal;
+  color: #00ff41;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 5px #00ff41;
+}
+
+.preset-select {
+  padding: 0.75rem;
+  border: 2px solid #00ff41;
+  border-radius: 0;
+  font-size: 0.6rem;
+  font-weight: normal;
+  font-family: inherit;
+  background: #0a0e27;
+  color: #00ff41;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3), inset 0 0 10px rgba(0, 255, 65, 0.1);
+  text-transform: uppercase;
+}
+
+.preset-select:focus {
+  outline: none;
+  border-color: #00ccff;
+  box-shadow: 0 0 20px rgba(0, 204, 255, 0.5), inset 0 0 10px rgba(0, 204, 255, 0.2);
+}
+
+.preset-select:hover {
+  border-color: #00ccff;
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.4);
+}
+
+.preset-select option {
+  background: #0a0e27;
+  color: #00ff41;
+}
+
+button.primary {
+  border: 3px solid #00ff41;
+  border-radius: 0;
+  padding: 1rem 2rem;
+  font-size: 0.6rem;
+  font-weight: normal;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: rgba(0, 255, 65, 0.1);
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.4), inset 0 0 15px rgba(0, 255, 65, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  position: relative;
+}
+
+button.primary:hover {
+  background: rgba(0, 255, 65, 0.2);
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.6), inset 0 0 20px rgba(0, 255, 65, 0.2);
+  text-shadow: 0 0 15px #00ff41, 0 0 25px #00ff41;
+}
+
+button.primary:active {
+  background: rgba(0, 255, 65, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.5), inset 0 0 25px rgba(0, 255, 65, 0.3);
+}
+
+button.secondary {
+  border: 3px solid #00ccff;
+  border-radius: 0;
+  padding: 1rem 2rem;
+  font-size: 0.6rem;
+  font-weight: normal;
+  font-family: inherit;
+  cursor: pointer;
+  background: rgba(0, 204, 255, 0.05);
+  color: #00ccff;
+  text-shadow: 0 0 10px #00ccff;
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.3), inset 0 0 10px rgba(0, 204, 255, 0.1);
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+button.secondary:hover {
+  background: rgba(0, 204, 255, 0.15);
+  box-shadow: 0 0 25px rgba(0, 204, 255, 0.5), inset 0 0 15px rgba(0, 204, 255, 0.2);
+  text-shadow: 0 0 15px #00ccff, 0 0 25px #00ccff;
+}
+
+button.secondary:active {
+  background: rgba(0, 204, 255, 0.25);
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.4), inset 0 0 20px rgba(0, 204, 255, 0.3);
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 204, 255, 0.05);
+  border-radius: 0;
+  box-shadow: 0 0 15px rgba(0, 204, 255, 0.3), inset 0 0 15px rgba(0, 204, 255, 0.1);
+  border: 3px solid #00ccff;
+  font-size: 0.5rem;
+  color: #00ccff;
+  text-shadow: 0 0 5px #00ccff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.board-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 3rem;
+  min-height: 320px;
+}
+
+.board-layer {
+  --cell-size: 32px;
+  position: relative;
+  grid-area: 1 / 1;
+  border-radius: 0;
+  overflow: visible;
+  border: 4px solid #00ff41;
+  background: rgba(0, 0, 0, 0.6);
+  transform-origin: center;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.4), inset 0 0 25px rgba(0, 255, 65, 0.1);
+}
+
+.board-layer.playing {
+  border-color: #00ff41;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.1);
+}
+
+.board-layer.won {
+  border-color: #ffff00;
+  box-shadow: 0 0 40px rgba(255, 255, 0, 0.6), inset 0 0 30px rgba(255, 255, 0, 0.2);
+  animation: glow 1s ease-in-out infinite;
+}
+
+.board-layer.lost {
+  border-color: #ff0066;
+  box-shadow: 0 0 40px rgba(255, 0, 102, 0.6), inset 0 0 30px rgba(255, 0, 102, 0.2);
+}
+
+.grid {
+  display: grid;
+  gap: 3px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: none;
+  border-top: none;
+  pointer-events: none;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: 0;
+  border: 2px solid rgba(0, 255, 65, 0.3);
+  font-weight: normal;
+  font-size: 0.9rem;
+  font-family: inherit;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+  background: #1a1f2e;
+  color: #00ff41;
+  box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
+  pointer-events: auto;
+  transition: all 0.1s ease;
+  position: relative;
+  text-shadow: 0 0 5px currentColor;
+}
+
+.cell.hidden {
+  border-color: rgba(0, 255, 65, 0.4);
+  background: #1a1f2e;
+}
+
+.cell.hidden:hover {
+  border-color: #00ff41;
+  background: #242938;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.4), inset 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.cell.hidden:active {
+  background: #2a2f3e;
+  box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+.cell.revealed {
+  cursor: default;
+  background: #0a0e1a;
+  border-color: rgba(0, 204, 255, 0.3);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.cell.flagged {
+  background: #1a1f2e;
+  border-color: #ff0066;
+  box-shadow: 0 0 15px rgba(255, 0, 102, 0.5), inset 0 0 15px rgba(255, 0, 102, 0.2);
+}
+
+.cell.mine.revealed {
+  background: #0a0e1a;
+  color: #ff0066;
+  border-color: #ff0066;
+  box-shadow: 0 0 20px rgba(255, 0, 102, 0.6), inset 0 0 20px rgba(255, 0, 102, 0.3);
+  text-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066;
+}
+
+.cell.triggered {
+  box-shadow: 0 0 30px rgba(255, 0, 102, 0.8), inset 0 0 25px rgba(255, 0, 102, 0.5);
+  animation: flicker 0.5s infinite;
+}
+
+.cell.misflagged {
+  background: #0a0e1a;
+  color: #ff0066;
+  border-color: #ff0066;
+  opacity: 0.6;
+}
+
+.cell.emptied {
+  visibility: hidden;
+  pointer-events: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: transparent;
+}
+
+.cell.number-1 {
+  color: #00ccff;
+  text-shadow: 0 0 10px #00ccff;
+}
+
+.cell.number-2 {
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+.cell.number-3 {
+  color: #ffff00;
+  text-shadow: 0 0 10px #ffff00;
+}
+
+.cell.number-4 {
+  color: #ff9500;
+  text-shadow: 0 0 10px #ff9500;
+}
+
+.cell.number-5 {
+  color: #ff0066;
+  text-shadow: 0 0 10px #ff0066;
+}
+
+.cell.number-6 {
+  color: #9d00ff;
+  text-shadow: 0 0 10px #9d00ff;
+}
+
+.cell.number-7 {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff;
+}
+
+.cell.number-8 {
+  color: #ffffff;
+  text-shadow: 0 0 10px #ffffff;
+}
+
+@media (max-width: 960px) {
+  .board-stack {
+    padding: 2rem 1rem 5rem;
+    min-height: 280px;
+  }
+
+  .board-layer {
+    --cell-size: 28px;
+    transform-origin: center;
+  }
+
+  .layer-meta {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .setup-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .game-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .summary {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .victory-section {
+    padding: 2.5rem 1.75rem;
+  }
+
+  .victory-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .board-stack {
+    min-height: 240px;
+  }
+}
