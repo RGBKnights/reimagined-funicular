@@ -651,6 +651,12 @@ defineExpose({
   flex: 0 0 auto;
 }
 
+.game-header .summary {
+  flex: 1 1 auto;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .game-title {
   margin: 0;
   font-size: clamp(1.75rem, 3vw, 2.4rem);
