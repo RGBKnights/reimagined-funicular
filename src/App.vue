@@ -179,14 +179,23 @@ function revealCell(layerIndex: number, cell: Cell) {
   if (cell.isFlagged || cell.isRevealed) return
 
   if (cell.hasMine) {
-    cell.wasTriggered = true
-    layer.status = 'lost'
-    revealAllMines(layer)
+    endGame(layerIndex, cell)
     return
   }
 
   floodReveal(layer, cell)
   checkWin(layer)
+}
+
+function endGame(triggeredLayerIndex: number, triggeredCell: Cell) {
+  triggeredCell.wasTriggered = true
+  triggeredCell.isRevealed = true
+
+  layers.value.forEach((layer, index) => {
+    if (layer.status === 'lost' && index !== triggeredLayerIndex) return
+    layer.status = 'lost'
+    revealAllMines(layer)
+  })
 }
 
 function floodReveal(layer: Layer, start: Cell) {
@@ -250,14 +259,19 @@ function checkWin(layer: Layer) {
 }
 
 function layerStyle(index: number, color: string) {
-  const glow = hexToRgba(color, 0.35)
-  const surface = hexToRgba(color, 0.12)
+  const glow = hexToRgba(color, 0.25)
+  const surface = mixWithWhite(color, 0.2)
+  const highlight = mixWithWhite(color, 0.4)
   return {
     '--layer-color': color,
+    '--cell-base': surface,
+    '--cell-highlight': highlight,
+    '--cell-border': hexToRgba(color, 0.35),
+    '--cell-shadow': hexToRgba(color, 0.2),
     zIndex: layers.value.length - index,
-    borderColor: hexToRgba(color, 0.55),
-    boxShadow: `0 18px 40px ${glow}, 0 12px 18px ${hexToRgba(color, 0.2)}`,
-    background: `linear-gradient(165deg, ${surface} 0%, rgba(255,255,255,0.95) 55%, #ffffff 100%)`
+    borderColor: hexToRgba(color, 0.35),
+    boxShadow: `0 18px 40px ${glow}, 0 12px 18px ${hexToRgba(color, 0.18)}`,
+    background: 'transparent'
   }
 }
 
@@ -269,13 +283,14 @@ function cellClasses(cell: Cell) {
     cell.wasTriggered ? 'triggered' : '',
     cell.isFlagged && !cell.isRevealed ? 'flagged' : '',
     cell.isMisflagged ? 'misflagged' : '',
+    cell.isRevealed && !cell.hasMine && cell.adjacentMines === 0 ? 'emptied' : '',
     !cell.hasMine && cell.isRevealed && cell.adjacentMines > 0
       ? `number-${cell.adjacentMines}`
       : ''
   ]
 }
 
-function hexToRgba(hex: string, alpha: number) {
+function parseHexColor(hex: string) {
   const sanitized = hex.replace('#', '')
   const value = sanitized.length === 3
     ? sanitized
@@ -287,6 +302,19 @@ function hexToRgba(hex: string, alpha: number) {
   const r = (bigint >> 16) & 255
   const g = (bigint >> 8) & 255
   const b = bigint & 255
+  return { r, g, b }
+}
+
+function mixWithWhite(hex: string, amount: number) {
+  const { r, g, b } = parseHexColor(hex)
+  const clampAmount = Math.min(Math.max(amount, 0), 1)
+  const mix = (channel: number) =>
+    Math.round(channel + (255 - channel) * clampAmount)
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  const { r, g, b } = parseHexColor(hex)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
@@ -358,17 +386,9 @@ defineExpose({
         v-for="(layer, layerIndex) in layers"
         :key="layer.id"
         class="board-layer"
-        :class="layer.status"
-        :style="layerStyle(layerIndex, layer.color)"
-      >
-        <header class="layer-header" :style="{ backgroundColor: layer.color }">
-          <div class="layer-title">Layer {{ layerIndex + 1 }}</div>
-          <div class="layer-meta">
-            <span>Status: <strong>{{ layer.status }}</strong></span>
-            <span>Mines: {{ layer.mines }}</span>
-            <span>Flags: {{ layer.flagsUsed }}</span>
-          </div>
-        </header>
+      :class="layer.status"
+      :style="layerStyle(layerIndex, layer.color)"
+    >
         <div class="grid" :style="gridStyle">
           <button
             v-for="cell in layer.flatCells"
@@ -515,23 +535,10 @@ button.secondary:active {
   border-radius: 1.25rem;
   overflow: hidden;
   border: 2px solid rgba(15, 23, 42, 0.08);
-  background-color: #fff;
+  background: transparent;
   transform-origin: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.board-layer:hover {
-  transform: scale(1.01);
-}
-
-.board-layer::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
   pointer-events: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
-  mix-blend-mode: screen;
 }
 
 .board-layer.playing {
@@ -546,67 +553,43 @@ button.secondary:active {
   filter: drop-shadow(0 24px 40px rgba(239, 68, 68, 0.35));
 }
 
-.layer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  color: #f8fafc;
-  background: linear-gradient(120deg, var(--layer-color), rgba(15, 23, 42, 0.75));
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.layer-title {
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.layer-meta {
-  display: flex;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-}
-
-.layer-meta span strong {
-  font-weight: 700;
-}
-
 .grid {
   display: grid;
   gap: 4px;
   padding: 1.25rem 1.5rem 1.75rem;
-  background: rgba(15, 23, 42, 0.05);
-  backdrop-filter: blur(3px);
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  background: transparent;
+  backdrop-filter: none;
+  border-top: none;
+  pointer-events: none;
 }
 
 .cell {
   width: var(--cell-size);
   height: var(--cell-size);
   border-radius: 0.5rem;
-  border: none;
+  border: 1px solid transparent;
   font-weight: 700;
   font-size: 1rem;
   display: grid;
   place-items: center;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(226, 232, 240, 0.4));
-  color: #1e293b;
-  box-shadow: inset 0 -2px 0 rgba(15, 23, 42, 0.1);
+  background: linear-gradient(150deg, var(--layer-color, #e2e8f0), var(--cell-base, #cbd5f5));
+  color: #0f172a;
+  box-shadow: inset 0 -2px 0 var(--cell-shadow, rgba(15, 23, 42, 0.1));
+  pointer-events: auto;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.cell.hidden:hover {
-  transform: translateY(-1px);
-  box-shadow: inset 0 -2px 0 rgba(15, 23, 42, 0.2);
+.cell.hidden {
+  border-color: var(--cell-border, rgba(148, 163, 184, 0.35));
 }
 
 .cell.revealed {
   cursor: default;
-  background: linear-gradient(145deg, rgba(224, 242, 254, 0.95), rgba(191, 219, 254, 0.35));
-  box-shadow: none;
+  background: linear-gradient(150deg, var(--cell-highlight, #eff6ff), rgba(255, 255, 255, 0.85));
+  border-color: var(--cell-border, rgba(148, 163, 184, 0.35));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .cell.flagged {
@@ -625,6 +608,15 @@ button.secondary:active {
 .cell.misflagged {
   background: rgba(248, 113, 113, 0.7);
   color: white;
+}
+
+.cell.emptied {
+  visibility: hidden;
+  pointer-events: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  color: transparent;
 }
 
 .cell.number-1 {
