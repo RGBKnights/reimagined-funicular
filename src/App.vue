@@ -845,16 +845,13 @@ button.secondary:active {
 }
 
 .board-layer.playing {
-  filter: drop-shadow(0 24px 50px rgba(15, 23, 42, 0.25));
   animation: float 4s ease-in-out infinite;
 }
 
 .board-layer.won {
-  filter: drop-shadow(0 24px 40px rgba(34, 197, 94, 0.35));
 }
 
 .board-layer.lost {
-  filter: drop-shadow(0 24px 40px rgba(239, 68, 68, 0.35));
 }
 
 .grid {
