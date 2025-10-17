@@ -880,7 +880,6 @@ button.secondary:active {
 }
 
 .board-layer.playing {
-  animation: float 4s ease-in-out infinite;
 }
 
 .board-layer.won {
@@ -902,46 +901,27 @@ button.secondary:active {
 .cell {
   width: var(--cell-size);
   height: var(--cell-size);
-  border-radius: 0.5rem;
-  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  border: 1px solid var(--cell-border, rgba(148, 163, 184, 0.35));
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: grid;
   place-items: center;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(150deg, var(--layer-color, #e2e8f0), var(--cell-base, #cbd5f5));
+  background: var(--layer-color, #e2e8f0);
   color: #0f172a;
-  box-shadow: inset 0 -3px 0 var(--cell-shadow, rgba(15, 23, 42, 0.15));
   pointer-events: auto;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
+  will-change: transform;
 }
 
-.cell::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent);
-  border-radius: 0.5rem;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.cell.hidden:hover::before {
-  opacity: 1;
-}
 
 .cell.hidden {
   border-color: var(--cell-border, rgba(148, 163, 184, 0.35));
 }
 
 .cell.hidden:hover {
-  transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), inset 0 -3px 0 var(--cell-shadow, rgba(15, 23, 42, 0.15));
+  filter: brightness(1.1);
 }
 
 .cell.hidden:active {
@@ -950,25 +930,22 @@ button.secondary:active {
 
 .cell.revealed {
   cursor: default;
-  background: linear-gradient(150deg, var(--cell-highlight, #eff6ff), rgba(255, 255, 255, 0.85));
+  background: rgba(255, 255, 255, 0.9);
   border-color: var(--cell-border, rgba(148, 163, 184, 0.35));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .cell.flagged {
-  background: linear-gradient(135deg, #ffd93d, #ffeaa7);
-  animation: pulse 0.5s ease-in-out;
+  background: #ffd93d;
   border-color: rgba(255, 217, 61, 0.5);
 }
 
 .cell.mine.revealed {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  background: #ff6b6b;
   color: #fff;
-  animation: pulse 0.3s ease-in-out;
 }
 
 .cell.triggered {
-  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.8), 0 0 20px rgba(248, 113, 113, 0.6);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.8);
   animation: pulse 0.5s ease-in-out infinite;
 }
 
