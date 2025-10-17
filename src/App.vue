@@ -43,9 +43,9 @@ type Preset = {
 }
 
 const presets: Record<string, Preset> = {
-  micro: { label: 'Small · 5×5×3', width: 5, height: 5, depth: 3 },
-  small: { label: 'Medium · 9×9×5', width: 9, height: 9, depth: 5 },
-  medium: { label: 'Large · 15×15×7', width: 15, height: 15, depth: 7 },
+  micro: { label: 'Small', width: 5, height: 5, depth: 3 },
+  small: { label: 'Medium', width: 9, height: 9, depth: 5 },
+  medium: { label: 'Large', width: 15, height: 15, depth: 7 },
 }
 
 type PresetKey = keyof typeof presets
@@ -413,9 +413,6 @@ defineExpose({
           Stack multiple Minesweeper boards, pick how deep you want to dig, and uncover every layer without triggering a mine.
         </p>
       </header>
-      <p class="setup-copy">
-        Choose a preset to set the width, height, and number of layers before diving in.
-      </p>
       <div class="setup-actions">
         <div class="preset-panel">
           <label class="preset-label" for="preset">Map size</label>
