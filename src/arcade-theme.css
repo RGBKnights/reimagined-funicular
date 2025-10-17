@@ -407,6 +407,8 @@ button.secondary:active {
   transition: all 0.1s ease;
   position: relative;
   text-shadow: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cell.hidden {

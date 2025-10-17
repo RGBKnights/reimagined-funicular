@@ -469,11 +469,10 @@ defineExpose({
           :class="layer.status"
           :style="layerStyle(layerIndex, layer.color)"
         >
-          <div class="grid" :style="gridStyle">
-            <button
+          <div v-if="layer.status !== 'won'" class="grid" :style="gridStyle">
+            <div
               v-for="cell in layer.flatCells"
               :key="`${cell.x}-${cell.y}`"
-              type="button"
               :class="cellClasses(cell)"
               @click="revealCell(layerIndex, cell)"
               @contextmenu.prevent="toggleFlag(layerIndex, cell)"
@@ -485,7 +484,7 @@ defineExpose({
               >
                 {{ cell.adjacentMines }}
               </span>
-            </button>
+            </div>
           </div>
         </div>
       </div>
