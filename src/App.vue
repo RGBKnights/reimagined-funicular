@@ -618,7 +618,7 @@ defineExpose({
 .game-section {
   display: grid;
   gap: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.75);
   padding: 2rem;
   border-radius: 2rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
