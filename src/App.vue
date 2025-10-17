@@ -26,16 +26,13 @@ type Layer = {
 }
 
 const palette = [
-  '#e8c8ec',
-  '#c8ece8',
-  '#ece8c8',
-  '#ecc8d0',
-  '#c8ecd0',
-  '#e0ecc8',
-  '#c8e0ec',
-  '#ecc8e0',
-  '#d0ecc8',
-  '#e0c8ec'
+  '#ddb5e8',
+  '#b5e8e0',
+  '#e8d4b5',
+  '#e8b5c8',
+  '#b5e8c0',
+  '#d8e8b5',
+  '#b5d0e8'
 ]
 
 type Preset = {
@@ -311,16 +308,16 @@ function checkWin(layerIndex: number) {
 
 function layerStyle(index: number, color: string) {
   const glow = hexToRgba(color, 0.25)
-  const surface = color // mixWithWhite(color, 0.2)
-  const highlight = mixWithWhite(color, 0.4)
+  const surface = color
+  const highlight = mixWithWhite(color, 0.15)
   return {
     '--layer-color': color,
     '--cell-base': surface,
     '--cell-highlight': highlight,
-    '--cell-border': hexToRgba(color, 0.35),
+    '--cell-border': hexToRgba(color, 0.5),
     '--cell-shadow': hexToRgba(color, 0.2),
     zIndex: layers.value.length - index,
-    borderColor: hexToRgba(color, 0.35),
+    borderColor: color,
     boxShadow: `0 18px 40px ${glow}, 0 12px 18px ${hexToRgba(color, 0.18)}`,
     background: 'transparent'
   }
