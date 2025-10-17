@@ -358,7 +358,7 @@ button.secondary:active {
   grid-area: 1 / 1;
   border-radius: 4px;
   overflow: visible;
-  border: 2px solid #c9b896;
+  border: 2px solid var(--layer-color, #c9b896);
   background: rgba(255, 255, 255, 0.95);
   transform-origin: center;
   transition: all 0.2s ease;
@@ -367,17 +367,14 @@ button.secondary:active {
 }
 
 .board-layer.playing {
-  border-color: #8b7e66;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .board-layer.won {
-  border-color: #8b9f78;
   box-shadow: 0 4px 16px rgba(139, 159, 120, 0.3);
 }
 
 .board-layer.lost {
-  border-color: #a07060;
   box-shadow: 0 4px 16px rgba(160, 112, 96, 0.3);
 }
 
@@ -395,7 +392,7 @@ button.secondary:active {
   width: var(--cell-size);
   height: var(--cell-size);
   border-radius: 2px;
-  border: 1px solid #d4c5a9;
+  border: 1px solid var(--cell-border, #d4c5a9);
   font-weight: 600;
   font-size: 0.9rem;
   font-family: inherit;
@@ -403,7 +400,7 @@ button.secondary:active {
   place-items: center;
   cursor: pointer;
   user-select: none;
-  background: #ebe7dc;
+  background: var(--cell-base, #ebe7dc);
   color: #4a4a4a;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   pointer-events: auto;
@@ -413,13 +410,13 @@ button.secondary:active {
 }
 
 .cell.hidden {
-  border-color: #c9b896;
-  background: #ebe7dc;
+  border-color: var(--cell-border, #c9b896);
+  background: var(--cell-base, #ebe7dc);
 }
 
 .cell.hidden:hover {
-  border-color: #8b7e66;
-  background: #dcd8cd;
+  border-color: var(--cell-border, #8b7e66);
+  background: var(--cell-highlight, #dcd8cd);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
@@ -430,8 +427,8 @@ button.secondary:active {
 
 .cell.revealed {
   cursor: default;
-  background: #faf8f3;
-  border-color: #e0d7c5;
+  background: var(--cell-highlight, #faf8f3);
+  border-color: var(--cell-border, #e0d7c5);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 

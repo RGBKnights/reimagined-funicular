@@ -26,16 +26,16 @@ type Layer = {
 }
 
 const palette = [
-  '#e6d5e8',
-  '#d5e8e6',
-  '#e8e6d5',
-  '#e8d5d8',
-  '#d5e8d8',
-  '#e6e8d5',
-  '#d8e6e8',
-  '#e8d8e6',
-  '#d8e8d5',
-  '#e6d8e8'
+  '#e8c8ec',
+  '#c8ece8',
+  '#ece8c8',
+  '#ecc8d0',
+  '#c8ecd0',
+  '#e0ecc8',
+  '#c8e0ec',
+  '#ecc8e0',
+  '#d0ecc8',
+  '#e0c8ec'
 ]
 
 type Preset = {
