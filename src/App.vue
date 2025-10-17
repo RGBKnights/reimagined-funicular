@@ -411,7 +411,7 @@ defineExpose({
           <h1 class="brand-name">Layered Minesweeper</h1>
         </div>
         <p>
-          Stack multiple Minesweeper boards, pick how deep you want to dig, and uncover every layer without triggering a mine.
+          We have stacked multiple Minesweeper boards! How deep can you dig without triggering a mine?
         </p>
       </header>
       <div class="setup-actions">
