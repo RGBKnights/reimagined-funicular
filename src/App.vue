@@ -242,30 +242,44 @@ function endGame(triggeredLayerIndex: number, triggeredCell: Cell) {
 }
 
 function floodReveal(layer: Layer, start: Cell) {
-  const queue: Cell[] = []
-  const enqueue = (target: Cell) => {
-    if (target.isRevealed || target.hasMine) return
-    target.isRevealed = true
-    layer.revealedCount++
-    if (target.adjacentMines === 0) {
-      queue.push(target)
+  const queue: Cell[] = [start]
+  const visited = new Set<Cell>()
+
+  visited.add(start)
+  start.isRevealed = true
+  layer.revealedCount++
+
+  const CHUNK_SIZE = 50
+
+  function processChunk() {
+    const chunkEnd = Math.min(queue.length, CHUNK_SIZE)
+    const batch: Cell[] = []
+
+    for (let i = 0; i < chunkEnd; i++) {
+      batch.push(queue.shift()!)
     }
-  }
 
-  enqueue(start)
+    for (const current of batch) {
+      for (const neighbor of getNeighbors(layer.cells, current)) {
+        if (visited.has(neighbor) || neighbor.isFlagged || neighbor.hasMine) continue
 
-  while (queue.length > 0) {
-    const current = queue.shift() as Cell
-    for (const neighbor of getNeighbors(layer.cells, current)) {
-      if (neighbor.isFlagged || neighbor.hasMine) continue
-      if (!neighbor.isRevealed) {
+        visited.add(neighbor)
         neighbor.isRevealed = true
         layer.revealedCount++
+
         if (neighbor.adjacentMines === 0) {
           queue.push(neighbor)
         }
       }
     }
+
+    if (queue.length > 0) {
+      requestAnimationFrame(processChunk)
+    }
+  }
+
+  if (start.adjacentMines === 0) {
+    requestAnimationFrame(processChunk)
   }
 }
 
