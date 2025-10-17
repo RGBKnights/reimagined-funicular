@@ -84,6 +84,19 @@ const overallStatus = computed(() => {
   if (layers.value.some((layer) => layer.status === 'lost')) return 'lost'
   return hasConfigured.value ? 'playing' : 'idle'
 })
+
+function shouldRenderLayer(layerIndex: number): boolean {
+  if (layerIndex === 0) return true
+
+  for (let i = 0; i < layerIndex; i++) {
+    const upperLayer = layers.value[i]
+    if (upperLayer.revealedCount > 0) {
+      return true
+    }
+  }
+
+  return false
+}
 function startGame() {
   hasWon.value = false
   hasConfigured.value = true
@@ -465,7 +478,7 @@ defineExpose({
           :class="layer.status"
           :style="layerStyle(layerIndex, layer.color)"
         >
-          <div v-if="layer.status !== 'won' && layerIndex === 0" class="grid" :style="gridStyle">
+          <div v-if="layer.status !== 'won' && shouldRenderLayer(layerIndex)" class="grid" :style="gridStyle">
             <div
               v-for="cell in layer.flatCells"
               :key="`${cell.x}-${cell.y}`"
