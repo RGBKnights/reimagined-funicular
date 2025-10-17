@@ -465,7 +465,7 @@ defineExpose({
           :class="layer.status"
           :style="layerStyle(layerIndex, layer.color)"
         >
-          <div v-if="layer.status !== 'won'" class="grid" :style="gridStyle">
+          <div v-if="layer.status !== 'won' && layerIndex === 0" class="grid" :style="gridStyle">
             <div
               v-for="cell in layer.flatCells"
               :key="`${cell.x}-${cell.y}`"
