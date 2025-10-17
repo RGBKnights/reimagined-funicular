@@ -434,7 +434,7 @@ defineExpose({
       aria-label="Active game"
     >
       <header class="game-header">
-        <h2 class="game-title">
+        <div class="header-left">
           <span class="brand-logo" aria-hidden="true">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -448,8 +448,8 @@ defineExpose({
               <rect x="18" y="12" width="24" height="24" rx="7" fill="url(#logo-gradient-game)" />
             </svg>
           </span>
-          Layered Minesweeper
-        </h2>
+          <h2 class="game-title">Layered Minesweeper</h2>
+        </div>
         <div class="summary">
           <span><strong>Total mines:</strong> {{ totalMines }}</span>
           <span><strong>Flags placed:</strong> {{ totalFlags }}</span>
@@ -644,14 +644,19 @@ defineExpose({
   gap: 2rem;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+}
+
 .game-title {
   margin: 0;
   font-size: clamp(1.75rem, 3vw, 2.4rem);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
   font-weight: 800;
   color: #1e293b;
+  white-space: nowrap;
 }
 
 .victory-header {
