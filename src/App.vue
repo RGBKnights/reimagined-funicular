@@ -527,6 +527,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 100vh;
 }
 
 .app-header {
@@ -535,24 +536,42 @@ defineExpose({
   align-items: center;
   text-align: center;
   gap: 0.75rem;
+  animation: float 3s ease-in-out infinite;
 }
 
 .app-header h1 {
   margin: 0 0 0.5rem;
   font-size: clamp(2rem, 4vw, 2.8rem);
+  background: linear-gradient(135deg, #ffd93d 0%, #ff6b6b 50%, #a8e6cf 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s ease-in-out infinite;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .app-header p {
   margin: 0;
   max-width: 60ch;
-  color: #52606d;
+  color: #ffffff;
   text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .setup-section {
   display: grid;
   gap: 1.5rem;
   justify-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 3rem 2rem;
+  border-radius: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  backdrop-filter: blur(10px);
 }
 
 .brand {
@@ -566,11 +585,16 @@ defineExpose({
   width: 3.25rem;
   height: 3.25rem;
   border-radius: 1rem;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(244, 114, 182, 0.15));
+  background: linear-gradient(135deg, rgba(255, 217, 61, 0.3), rgba(255, 107, 107, 0.3));
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover {
+  transform: rotate(360deg) scale(1.1);
 }
 
 .brand-logo svg {
@@ -586,8 +610,10 @@ defineExpose({
 .setup-copy {
   margin: 0;
   max-width: 48ch;
-  color: #64748b;
+  color: #475569;
   text-align: center;
+  font-size: 1.05rem;
+  font-weight: 500;
 }
 
 .setup-actions {
@@ -600,6 +626,11 @@ defineExpose({
 .game-section {
   display: grid;
   gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .victory-section {
@@ -609,9 +640,10 @@ defineExpose({
   justify-items: center;
   text-align: center;
   padding: 3rem 2.5rem;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(244, 114, 182, 0.12));
-  border-radius: 1.5rem;
-  box-shadow: 0 20px 45px rgba(79, 70, 229, 0.18);
+  background: linear-gradient(135deg, rgba(255, 217, 61, 0.95), rgba(168, 230, 207, 0.95));
+  border-radius: 2rem;
+  box-shadow: 0 25px 60px rgba(255, 217, 61, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .game-header {
@@ -626,6 +658,8 @@ defineExpose({
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
+  font-weight: 800;
+  color: #1e293b;
 }
 
 .victory-header {
@@ -638,26 +672,31 @@ defineExpose({
 .victory-header h2 {
   margin: 0;
   font-size: clamp(2rem, 4vw, 2.8rem);
-  color: #1f2937;
+  color: #1e293b;
+  font-weight: 900;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .victory-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #22c55e, #a855f7);
+  background: linear-gradient(135deg, #ffd93d, #ff6b6b);
   color: white;
-  font-size: 2rem;
-  box-shadow: 0 18px 35px rgba(34, 197, 94, 0.35);
+  font-size: 2.5rem;
+  box-shadow: 0 18px 35px rgba(255, 217, 61, 0.5);
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .victory-copy {
   margin: 0;
   max-width: 48ch;
-  color: #334155;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .victory-actions {
@@ -680,84 +719,116 @@ defineExpose({
   flex-direction: column;
   gap: 0.35rem;
   padding: 1rem 1.25rem;
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .preset-label {
   font-size: 0.85rem;
-  font-weight: 600;
-  color: #334155;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .preset-select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.75rem;
   font-size: 1rem;
+  font-weight: 600;
   background: white;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .preset-select:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+  transform: scale(1.02);
 }
 
 button.primary {
   border: none;
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #ff6b6b, #ffd93d);
   color: white;
-  box-shadow: 0 12px 25px rgba(99, 102, 241, 0.25);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+button.primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+button.primary:hover::before {
+  left: 100%;
 }
 
 button.primary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
 }
 
 button.primary:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.98);
 }
 
 button.secondary {
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-  font-weight: 600;
+  border: 2px solid rgba(255, 107, 107, 0.5);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
   background: white;
-  color: #4338ca;
-  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.15);
-  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  color: #ff6b6b;
+  box-shadow: 0 8px 18px rgba(255, 107, 107, 0.2);
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 button.secondary:hover {
-  transform: translateY(-1px);
-  border-color: #6366f1;
-  box-shadow: 0 12px 22px rgba(99, 102, 241, 0.2);
+  transform: translateY(-3px) scale(1.02);
+  border-color: #ff6b6b;
+  box-shadow: 0 12px 22px rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.05);
 }
 
 button.secondary:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.98);
 }
 
 .summary {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  padding: 0.75rem 1rem;
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(253, 224, 71, 0.5);
+  font-weight: 600;
 }
 
 .board-stack {
@@ -772,17 +843,18 @@ button.secondary:active {
   --cell-size: 32px;
   position: relative;
   grid-area: 1 / 1;
-  border-radius: 1.25rem;
+  border-radius: 1.5rem;
   overflow: hidden;
-  border: 2px solid rgba(15, 23, 42, 0.08);
+  border: 3px solid rgba(255, 255, 255, 0.3);
   background: transparent;
   transform-origin: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
 }
 
 .board-layer.playing {
-  filter: drop-shadow(0 24px 50px rgba(15, 23, 42, 0.18));
+  filter: drop-shadow(0 24px 50px rgba(15, 23, 42, 0.25));
+  animation: float 4s ease-in-out infinite;
 }
 
 .board-layer.won {
@@ -808,21 +880,48 @@ button.secondary:active {
   height: var(--cell-size);
   border-radius: 0.5rem;
   border: 1px solid transparent;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.1rem;
   display: grid;
   place-items: center;
   cursor: pointer;
   user-select: none;
   background: linear-gradient(150deg, var(--layer-color, #e2e8f0), var(--cell-base, #cbd5f5));
   color: #0f172a;
-  box-shadow: inset 0 -2px 0 var(--cell-shadow, rgba(15, 23, 42, 0.1));
+  box-shadow: inset 0 -3px 0 var(--cell-shadow, rgba(15, 23, 42, 0.15));
   pointer-events: auto;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent);
+  border-radius: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cell.hidden:hover::before {
+  opacity: 1;
 }
 
 .cell.hidden {
   border-color: var(--cell-border, rgba(148, 163, 184, 0.35));
+}
+
+.cell.hidden:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), inset 0 -3px 0 var(--cell-shadow, rgba(15, 23, 42, 0.15));
+}
+
+.cell.hidden:active {
+  transform: scale(0.95);
 }
 
 .cell.revealed {
@@ -833,16 +932,20 @@ button.secondary:active {
 }
 
 .cell.flagged {
-  background: rgba(255, 243, 178, 0.95);
+  background: linear-gradient(135deg, #ffd93d, #ffeaa7);
+  animation: pulse 0.5s ease-in-out;
+  border-color: rgba(255, 217, 61, 0.5);
 }
 
 .cell.mine.revealed {
-  background: rgba(248, 113, 113, 0.95);
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
   color: #fff;
+  animation: pulse 0.3s ease-in-out;
 }
 
 .cell.triggered {
-  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.6);
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.8), 0 0 20px rgba(248, 113, 113, 0.6);
+  animation: pulse 0.5s ease-in-out infinite;
 }
 
 .cell.misflagged {
