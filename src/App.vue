@@ -46,6 +46,7 @@ const presets: Record<string, Preset> = {
   micro: { label: 'Micro', width: 5, height: 5, depth: 3 },
   small: { label: 'Small', width: 9, height: 9, depth: 5 },
   medium: { label: 'Medium', width: 15, height: 15, depth: 7 },
+  large: { label: 'Large', width: 24, height: 24, depth: 12 },
 }
 
 type PresetKey = keyof typeof presets
