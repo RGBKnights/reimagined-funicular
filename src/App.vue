@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 type GameStatus = 'playing' | 'won' | 'lost'
 
@@ -60,6 +60,8 @@ const presetOptions = Object.entries(presets).map(([key, value]) => ({
 }))
 
 const selectedPreset = ref<PresetKey>('micro')
+const hasConfigured = ref(false)
+const hasWon = ref(false)
 
 const width = ref(presets[selectedPreset.value].width)
 const height = ref(presets[selectedPreset.value].height)
@@ -80,6 +82,22 @@ const totalMines = computed(() =>
 const totalFlags = computed(() =>
   layers.value.reduce((total, layer) => total + layer.flagsUsed, 0)
 )
+const overallStatus = computed(() => {
+  if (hasWon.value) return 'won'
+  if (layers.value.some((layer) => layer.status === 'lost')) return 'lost'
+  return hasConfigured.value ? 'playing' : 'idle'
+})
+function startGame() {
+  hasWon.value = false
+  hasConfigured.value = true
+  newGame()
+}
+
+function resetGame() {
+  hasConfigured.value = false
+  hasWon.value = false
+  layers.value = []
+}
 
 function newGame() {
   const layerCount = depth.value
@@ -98,7 +116,9 @@ function applyPreset(key: PresetKey) {
 
 watch(selectedPreset, (key) => {
   applyPreset(key)
-  newGame()
+  if (hasConfigured.value) {
+    newGame()
+  }
 })
 
 function createLayer(index: number): Layer {
@@ -197,7 +217,7 @@ function revealCell(layerIndex: number, cell: Cell) {
   }
 
   floodReveal(layer, cell)
-  checkWin(layer)
+  checkWin(layerIndex)
 }
 
 function endGame(triggeredLayerIndex: number, triggeredCell: Cell) {
@@ -256,10 +276,28 @@ function toggleFlag(layerIndex: number, cell: Cell) {
 
   cell.isFlagged = !cell.isFlagged
   layer.flagsUsed += cell.isFlagged ? 1 : -1
+  checkLayerCleared(layerIndex)
 }
 
-function checkWin(layer: Layer) {
-  const safeCells = width.value * height.value - layer.mines
+function checkLayerCleared(layerIndex: number) {
+  const layer = layers.value[layerIndex]
+  if (!layer) return
+  if (layer.flagsUsed !== layer.mines) return
+  const solved = layer.flatCells.every((cell) =>
+    cell.hasMine ? cell.isFlagged : !cell.isFlagged
+  )
+  if (!solved) return
+  layers.value.splice(layerIndex, 1)
+  if (layers.value.length === 0) {
+    hasConfigured.value = false
+    hasWon.value = true
+  }
+}
+
+function checkWin(layerIndex: number) {
+  const layer = layers.value[layerIndex]
+  if (!layer) return
+  const safeCells = layer.flatCells.length - layer.mines
   if (layer.revealedCount >= safeCells) {
     layer.status = 'won'
     for (const cell of layer.flatCells) {
@@ -268,6 +306,7 @@ function checkWin(layer: Layer) {
         layer.flagsUsed++
       }
     }
+    checkLayerCleared(layerIndex)
   }
 }
 
@@ -331,75 +370,150 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
-onMounted(() => {
-  newGame()
-})
-
 defineExpose({
+  startGame,
+  resetGame,
   newGame,
   revealCell,
   toggleFlag,
   layers,
+  hasConfigured,
+  hasWon,
   selectedPreset,
   presetOptions,
   width,
   height,
   depth,
-  mineDensity
+  mineDensity,
+  overallStatus
 })
 </script>
 
 <template>
   <div class="app-shell">
-    <header class="app-header">
-      <h1>Layered Minesweeper</h1>
-      <p>
-        Stack multiple Minesweeper boards and how deep can you dig?
+    <section
+      v-if="!hasConfigured && !hasWon"
+      class="setup-section"
+      aria-label="Game overview and setup"
+    >
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#6366f1" />
+                  <stop offset="1" stop-color="#f472b6" />
+                </linearGradient>
+              </defs>
+              <rect x="6" y="10" width="26" height="26" rx="6" fill="rgba(45, 212, 191, 0.65)" />
+              <rect x="12" y="6" width="26" height="26" rx="8" fill="rgba(96, 165, 250, 0.7)" />
+              <rect x="18" y="12" width="24" height="24" rx="7" fill="url(#logo-gradient)" />
+            </svg>
+          </span>
+          <h1 class="brand-name">Layered Minesweeper</h1>
+        </div>
+        <p>
+          Stack multiple Minesweeper boards, pick how deep you want to dig, and uncover every layer without triggering a mine.
+        </p>
+      </header>
+      <p class="setup-copy">
+        Choose a preset to set the width, height, and number of layers before diving in.
       </p>
-    </header>
-
-    <section class="controls" aria-label="Game controls">
-      <div class="preset-panel">
-        <label class="preset-label" for="preset">Map size</label>
-        <select id="preset" class="preset-select" v-model="selectedPreset">
-          <option v-for="option in presetOptions" :key="option.key" :value="option.key">
-            {{ option.label }}
-          </option>
-        </select>
-      </div>
-      <button class="primary" type="button" @click="newGame">New Game</button>
-      <div class="summary">
-        <span><strong>Total mines:</strong> {{ totalMines }}</span>
-        <span><strong>Flags placed:</strong> {{ totalFlags }}</span>
+      <div class="setup-actions">
+        <div class="preset-panel">
+          <label class="preset-label" for="preset">Map size</label>
+          <select id="preset" class="preset-select" v-model="selectedPreset">
+            <option v-for="option in presetOptions" :key="option.key" :value="option.key">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        <button class="primary" type="button" @click="startGame">
+          Start Game
+        </button>
       </div>
     </section>
 
-    <section class="board-stack" role="region" aria-live="polite">
-      <div
-        v-for="(layer, layerIndex) in layers"
-        :key="layer.id"
-        class="board-layer"
-      :class="layer.status"
-      :style="layerStyle(layerIndex, layer.color)"
+    <section
+      v-else-if="hasConfigured"
+      class="game-section"
+      aria-label="Active game"
     >
-        <div class="grid" :style="gridStyle">
-          <button
-            v-for="cell in layer.flatCells"
-            :key="`${cell.x}-${cell.y}`"
-            type="button"
-            :class="cellClasses(cell)"
-            @click="revealCell(layerIndex, cell)"
-            @contextmenu.prevent="toggleFlag(layerIndex, cell)"
-          >
-            <span v-if="cell.isRevealed && cell.hasMine">💣</span>
-            <span v-else-if="!cell.isRevealed && cell.isFlagged">🚩</span>
-            <span
-              v-else-if="cell.isRevealed && !cell.hasMine && cell.adjacentMines > 0"
-            >
-              {{ cell.adjacentMines }}
-            </span>
-          </button>
+      <header class="game-header">
+        <h2 class="game-title">
+          <span class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logo-gradient-game" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#6366f1" />
+                  <stop offset="1" stop-color="#f472b6" />
+                </linearGradient>
+              </defs>
+              <rect x="6" y="10" width="26" height="26" rx="6" fill="rgba(45, 212, 191, 0.65)" />
+              <rect x="12" y="6" width="26" height="26" rx="8" fill="rgba(96, 165, 250, 0.7)" />
+              <rect x="18" y="12" width="24" height="24" rx="7" fill="url(#logo-gradient-game)" />
+            </svg>
+          </span>
+          Layered Minesweeper
+        </h2>
+      </header>
+      <div class="game-controls">
+        <button class="primary" type="button" @click="resetGame">New Game</button>
+        <div class="summary">
+          <span><strong>Total mines:</strong> {{ totalMines }}</span>
+          <span><strong>Flags placed:</strong> {{ totalFlags }}</span>
         </div>
+      </div>
+      <div class="board-stack" role="region" aria-live="polite">
+        <div
+          v-for="(layer, layerIndex) in layers"
+          :key="layer.id"
+          class="board-layer"
+          :class="layer.status"
+          :style="layerStyle(layerIndex, layer.color)"
+        >
+          <div class="grid" :style="gridStyle">
+            <button
+              v-for="cell in layer.flatCells"
+              :key="`${cell.x}-${cell.y}`"
+              type="button"
+              :class="cellClasses(cell)"
+              @click="revealCell(layerIndex, cell)"
+              @contextmenu.prevent="toggleFlag(layerIndex, cell)"
+            >
+              <span v-if="cell.isRevealed && cell.hasMine">💣</span>
+              <span v-else-if="!cell.isRevealed && cell.isFlagged">🚩</span>
+              <span
+                v-else-if="cell.isRevealed && !cell.hasMine && cell.adjacentMines > 0"
+              >
+                {{ cell.adjacentMines }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      v-else
+      class="victory-section"
+      aria-label="Victory summary"
+    >
+      <header class="victory-header">
+        <span class="victory-badge" aria-hidden="true">🎉</span>
+        <h2>You Cleared Every Layer!</h2>
+      </header>
+      <p class="victory-copy">
+        Awesome work! You navigated all {{ depth }} layers without tripping a single mine. Ready to try again?
+      </p>
+      <div class="victory-actions">
+        <button class="primary" type="button" @click="startGame">
+          Play Again
+        </button>
+        <button class="secondary" type="button" @click="resetGame">
+          Back to Settings
+        </button>
       </div>
     </section>
   </div>
@@ -435,7 +549,125 @@ defineExpose({
   text-align: center;
 }
 
-.controls {
+.setup-section {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(244, 114, 182, 0.15));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.12);
+}
+
+.brand-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand-name {
+  margin: 0;
+}
+
+.setup-copy {
+  margin: 0;
+  max-width: 48ch;
+  color: #64748b;
+  text-align: center;
+}
+
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.game-section {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.victory-section {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  padding: 3rem 2.5rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(244, 114, 182, 0.12));
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 45px rgba(79, 70, 229, 0.18);
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.victory-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.victory-header h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #1f2937;
+}
+
+.victory-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #a855f7);
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 18px 35px rgba(34, 197, 94, 0.35);
+}
+
+.victory-copy {
+  margin: 0;
+  max-width: 48ch;
+  color: #334155;
+}
+
+.victory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.game-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -492,6 +724,29 @@ button.primary:hover {
 }
 
 button.primary:active {
+  transform: translateY(0);
+}
+
+button.secondary {
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  color: #4338ca;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+button.secondary:hover {
+  transform: translateY(-1px);
+  border-color: #6366f1;
+  box-shadow: 0 12px 22px rgba(99, 102, 241, 0.2);
+}
+
+button.secondary:active {
   transform: translateY(0);
 }
 
@@ -655,7 +910,12 @@ button.primary:active {
 }
 
 @media (max-width: 640px) {
-  .controls {
+  .setup-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .game-controls {
     flex-direction: column;
     align-items: stretch;
   }
@@ -665,8 +925,18 @@ button.primary:active {
     justify-content: space-between;
   }
 
+  .victory-section {
+    padding: 2.5rem 1.75rem;
+  }
+
+  .victory-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .board-stack {
     min-height: 240px;
   }
 }
 </style>
+
