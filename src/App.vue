@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 type GameStatus = 'playing' | 'won' | 'lost'
 
@@ -38,17 +38,33 @@ const palette = [
   '#55EFC4'
 ]
 
-const pending = reactive({
-  width: 10,
-  height: 10,
-  depth: 3,
-  mineDensity: 0.16
-})
+type Preset = {
+  label: string
+  width: number
+  height: number
+  depth: number
+}
 
-const width = ref(pending.width)
-const height = ref(pending.height)
-const depth = ref(pending.depth)
-const mineDensity = ref(pending.mineDensity)
+const presets: Record<string, Preset> = {
+  micro: { label: 'Micro · 5×5×2', width: 5, height: 5, depth: 2 },
+  small: { label: 'Small · 9×9×3', width: 9, height: 9, depth: 3 },
+  medium: { label: 'Medium · 15×15×5', width: 15, height: 15, depth: 5 },
+  large: { label: 'Large · 24×24×7', width: 24, height: 24, depth: 7 }
+}
+
+type PresetKey = keyof typeof presets
+
+const presetOptions = Object.entries(presets).map(([key, value]) => ({
+  key: key as PresetKey,
+  ...value
+}))
+
+const selectedPreset = ref<PresetKey>('micro')
+
+const width = ref(presets[selectedPreset.value].width)
+const height = ref(presets[selectedPreset.value].height)
+const depth = ref(presets[selectedPreset.value].depth)
+const mineDensity = ref(0.16)
 
 const layers = ref<Layer[]>([])
 
@@ -65,28 +81,25 @@ const totalFlags = computed(() =>
   layers.value.reduce((total, layer) => total + layer.flagsUsed, 0)
 )
 
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, Math.round(value)))
-}
-
-function applySettings() {
-  width.value = clamp(pending.width, 4, 32)
-  height.value = clamp(pending.height, 4, 24)
-  depth.value = clamp(pending.depth, 1, 10)
-  mineDensity.value = Math.min(Math.max(pending.mineDensity, 0.05), 0.4)
-  newGame()
-  pending.width = width.value
-  pending.height = height.value
-  pending.depth = depth.value
-  pending.mineDensity = Number(mineDensity.value.toFixed(2))
-}
-
 function newGame() {
   const layerCount = depth.value
   layers.value = Array.from({ length: layerCount }, (_, index) =>
     createLayer(index)
   )
 }
+
+function applyPreset(key: PresetKey) {
+  const preset = presets[key]
+  if (!preset) return
+  width.value = preset.width
+  height.value = preset.height
+  depth.value = preset.depth
+}
+
+watch(selectedPreset, (key) => {
+  applyPreset(key)
+  newGame()
+})
 
 function createLayer(index: number): Layer {
   const totalCells = width.value * height.value
@@ -323,12 +336,12 @@ onMounted(() => {
 })
 
 defineExpose({
-  applySettings,
   newGame,
   revealCell,
   toggleFlag,
   layers,
-  pending,
+  selectedPreset,
+  presetOptions,
   width,
   height,
   depth,
@@ -341,40 +354,20 @@ defineExpose({
     <header class="app-header">
       <h1>Layered Minesweeper</h1>
       <p>
-        Stack multiple Minesweeper boards and tackle them layer by layer. Use the
-        controls below to tweak the board dimensions (X × Y) and the number of
-        layers (Z), then start a fresh challenge.
+        Stack multiple Minesweeper boards and how deep can you dig?
       </p>
     </header>
 
-    <section class="controls" aria-label="Debug controls">
-      <form class="control-form" @submit.prevent="applySettings">
-        <div class="control-group">
-          <label for="width">Width (X)</label>
-          <input id="width" v-model.number="pending.width" type="number" min="4" max="32" />
-        </div>
-        <div class="control-group">
-          <label for="height">Height (Y)</label>
-          <input id="height" v-model.number="pending.height" type="number" min="4" max="24" />
-        </div>
-        <div class="control-group">
-          <label for="depth">Layers (Z)</label>
-          <input id="depth" v-model.number="pending.depth" type="number" min="1" max="10" />
-        </div>
-        <div class="control-group">
-          <label for="density">Mine density</label>
-          <input
-            id="density"
-            v-model.number="pending.mineDensity"
-            type="number"
-            step="0.01"
-            min="0.05"
-            max="0.4"
-          />
-        </div>
-        <button type="submit" class="primary">Apply &amp; Restart</button>
-      </form>
-      <button class="secondary" type="button" @click="newGame">New Game</button>
+    <section class="controls" aria-label="Game controls">
+      <div class="preset-panel">
+        <label class="preset-label" for="preset">Map size</label>
+        <select id="preset" class="preset-select" v-model="selectedPreset">
+          <option v-for="option in presetOptions" :key="option.key" :value="option.key">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <button class="primary" type="button" @click="newGame">New Game</button>
       <div class="summary">
         <span><strong>Total mines:</strong> {{ totalMines }}</span>
         <span><strong>Flags placed:</strong> {{ totalFlags }}</span>
@@ -422,6 +415,14 @@ defineExpose({
   gap: 1.5rem;
 }
 
+.app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
 .app-header h1 {
   margin: 0 0 0.5rem;
   font-size: clamp(2rem, 4vw, 2.8rem);
@@ -431,54 +432,49 @@ defineExpose({
   margin: 0;
   max-width: 60ch;
   color: #52606d;
+  text-align: center;
 }
 
 .controls {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
 }
 
-.control-form {
+.preset-panel {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-width: 120px;
-}
-
-.control-group label {
+.preset-label {
   font-size: 0.85rem;
   font-weight: 600;
   color: #334155;
 }
 
-.control-group input {
-  padding: 0.45rem 0.65rem;
+.preset-select {
+  padding: 0.5rem 0.75rem;
   border: 1px solid #cbd5e1;
   border-radius: 0.5rem;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  background: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.control-group input:focus {
+.preset-select:focus {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-button.primary,
-button.secondary {
+button.primary {
   border: none;
   border-radius: 0.75rem;
   padding: 0.75rem 1.25rem;
@@ -486,27 +482,16 @@ button.secondary {
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-button.primary {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
   box-shadow: 0 12px 25px rgba(99, 102, 241, 0.25);
 }
 
-button.secondary {
-  background: white;
-  color: #0f172a;
-  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.15);
-}
-
-button.primary:hover,
-button.secondary:hover {
+button.primary:hover {
   transform: translateY(-1px);
 }
 
-button.primary:active,
-button.secondary:active {
+button.primary:active {
   transform: translateY(0);
 }
 
